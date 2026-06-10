@@ -21,12 +21,12 @@ const isSignup = ref(false)
 
 <style scoped>
 #connection {
-  max-width: 380px;
-  margin: 80px auto;
-  padding: 32px;
-  border-radius: 16px;
+  max-width: 24rem;
+  margin: 20vh auto;
+  padding: 2rem;
+  border-radius: 1rem;
   border: 1px solid var(--color-primary);
-  box-shadow: 10px 10px 24px var(--shadow);
+  box-shadow: 0.5rem 0.5rem 1.5rem var(--shadow);
   background: var(--bg);
   transition: background 0.3s;
 }
@@ -34,19 +34,19 @@ const isSignup = ref(false)
 .toggle {
   display: flex;
   background: var(--color-border);
-  border-radius: 10px;
-  padding: 4px;
-  margin-bottom: 28px;
-  gap: 4px;
+  border-radius: 0.625rem;
+  padding: 0.25rem;
+  margin-bottom: 1.75rem;
+  gap: 0.25rem;
 }
 
 .toggle button {
   flex: 1;
-  height: 38px;
+  height: 2.375rem;
   border: none;
-  border-radius: 7px;
+  border-radius: 0.4rem;
   background: transparent;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--color-label);
   cursor: pointer;
@@ -58,6 +58,6 @@ const isSignup = ref(false)
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--color-primary);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 0.25rem rgba(0, 0, 0, 0.1);
 }
 </style>

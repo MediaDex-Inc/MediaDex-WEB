@@ -96,28 +96,28 @@ const register = async () => {
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
 }
 
 .field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 label {
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--color-label);
 }
 
 input {
   background: var(--bg-label);
-  height: 42px;
-  border-radius: 8px;
+  height: 2.625rem;
+  border-radius: 0.5rem;
   border: 0px solid;
-  padding: 0 12px;
-  font-size: 14px;
+  padding: 0 0.75rem;
+  font-size: 0.875rem;
   font-family: inherit;
   outline: none;
   transition: border-color 0.2s;
@@ -129,22 +129,22 @@ input:focus {
 }
 
 .error {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--error);
 }
 
 .btn {
-  height: 44px;
-  border-radius: 8px;
+  height: 2.75rem;
+  border-radius: 0.5rem;
   border: none;
   background: var(--color-primary);
   color: var(--color-border);
-  font-size: 15px;
+  font-size: 0.9375rem;
   font-weight: 600;
   font-family: inherit;
   cursor: pointer;
   transition: opacity 0.2s;
-  margin-top: 4px;
+  margin-top: 0.25rem;
 }
 
 .btn:hover { opacity: 0.9; }

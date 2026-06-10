@@ -23,7 +23,7 @@ const logoSrc = computed(() => theme.isDark ? nameLightUrl : nameDarkUrl)
 }
 
 .logo img {
-  height: 32px;
+  height: 2rem;
   width: auto;
 }
 </style>
