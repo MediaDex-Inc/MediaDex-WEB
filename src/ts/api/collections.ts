@@ -1,5 +1,6 @@
+import { normalizeFilters } from '../utils/filters'
 import {request} from './helper'
-import type { Collection } from '@/types/collection'
+import type { Collection, CollectionApi } from '@/types/collection'
 
 /**
  * Call collections api endpoint to get all collection of the user.
@@ -7,12 +8,24 @@ import type { Collection } from '@/types/collection'
  * @returns All the collection for the user.
  * @throws Error When there is an API issue
  */
-export async function getCollection(): Promise<Collection[]> {
-    return request('/collections')
+export async function getCollections(): Promise<Collection[]> {
+    const data = await request<CollectionApi[]>('/collections')
+
+    return data.map(c => ({
+        userId: c.user_id,
+        name: c.name,
+        filters: normalizeFilters(c.filters)
+    }))
 }
 
 export async function getCollectionById(
-    collectionId: number
+  collectionId: number
 ): Promise<Collection> {
-    return request(`/collections/${collectionId}`)
+    const data = await request<CollectionApi>(`/collections/${collectionId}`)
+
+    return {
+        userId: data.user_id,
+        name: data.name,
+        filters: normalizeFilters(data.filters)
+    }
 }

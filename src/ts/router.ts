@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ConnectionPage from '@/pages/Connection.vue'
 import Home from '@/pages/Home.vue'
+import Search from '@/pages/Search.vue'
 import { loadRefreshToken, saveRefreshToken, saveToken } from '@/ts/saveload'
 import { BASE } from '@/ts/api/helper'
 
@@ -14,6 +15,11 @@ const routes = [
         path: '/',
         name: 'Home',
         component: Home
+    },
+    {
+        path: '/search',
+        name: "Search",
+        component: Search
     }
 ]
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { getCollection } from '@/ts/api/collections';
+import { getCollections } from '@/ts/api/collections';
 import { getTags } from '@/ts/api/tags';
 import { ref, computed, onMounted } from 'vue';
 import type { Collection } from '@/types/collection';
@@ -33,7 +33,7 @@ const collections = async () => {
     apiErrorCollection.value = null
 
     try {
-        collectionsData.value = await getCollection()
+        collectionsData.value = await getCollections()
     } catch (e: unknown) {
         apiErrorCollection.value =
             e instanceof Error
