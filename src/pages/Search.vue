@@ -12,16 +12,18 @@ import type { Tags } from '@/types/tags'
 
 import { formatOp } from '@/ts/utils/filters'
 import { AVAILABLE_FILTERS, FILTER_OPERATORS } from '@/ts/constants/filters'
+import { useMediaStore } from '@/stores/media'
 
 /* ---------------- state ---------------- */
 
+const store = useMediaStore()
 const search = ref('')
 const selectedTag = ref('')
 const selectedCollectionName = ref('')
 
 const collections = ref<Collection[]>([])
 const tags = ref<Tags[]>([])
-const media = ref<any[]>([])
+// const media = ref<any[]>([])
 
 const editableFilters = ref<CollectionFilter[]>([])
 
@@ -84,7 +86,7 @@ const compare = (field: any, op: string, value: string) => {
 const filteredMedia = computed(() => {
     const filters = editableFilters.value.filter(f => f.Key && f.ops && f.Value)
 
-    return media.value.filter(item =>
+    return store.media.filter(item =>
         filters.every(f => {
         const field = item[normalizeKey(f.Key)]
         return compare(field, f.ops, f.Value)
@@ -110,14 +112,6 @@ const getAllTags = async () => {
     }
 }
 
-const getAllMedia = async () => {
-    try {
-        media.value = await getMedia()
-    } catch (e) {
-        console.log(e)
-    }
-}
-
 /* ---------------- watchers ---------------- */
 
 watch(selectedCollection, (col) => {
@@ -135,7 +129,7 @@ watch(selectedCollection, (col) => {
 onMounted(() => {
     editableFilters.value = [{ Key: '', ops: '', Value: '' }]
 
-    getAllMedia()
+    store.loadMediaIfNeeded();
     getAllCollections()
     getAllTags()
 })
