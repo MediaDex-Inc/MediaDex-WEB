@@ -2,7 +2,7 @@
 import { computed, ref, onMounted, watch } from 'vue'
 import { toRaw } from 'vue'
 
-import { getTags } from '@/ts/api/tags'
+import { getMediaByTagId, getTags } from '@/ts/api/tags'
 import { getCollections } from '@/ts/api/collections'
 import { getMedia } from '@/ts/api/media'
 
@@ -18,12 +18,11 @@ import { useMediaStore } from '@/stores/media'
 
 const store = useMediaStore()
 const search = ref('')
-const selectedTag = ref('')
+const selectedTagName = ref('')
 const selectedCollectionName = ref('')
 
 const collections = ref<Collection[]>([])
 const tags = ref<Tags[]>([])
-// const media = ref<any[]>([])
 
 const editableFilters = ref<CollectionFilter[]>([])
 
@@ -32,6 +31,10 @@ const normalizeKey = (key: string) => key.charAt(0).toLowerCase() + key.slice(1)
 
 const selectedCollection = computed(() =>
     collections.value.find(c => c.name === selectedCollectionName.value) ?? null
+)
+
+const selectedTag = computed(() =>
+    tags.value.find(c => c.name === selectedTagName.value) ?? null
 )
 
 /* ---------------- logic ---------------- */
@@ -84,21 +87,45 @@ const compare = (field: any, op: string, value: string) => {
 }
 
 const filteredMedia = computed(() => {
-    const filters = editableFilters.value.filter(f => f.Key && f.ops && f.Value)
+  const filters = editableFilters.value.filter(f => f.Key && f.ops && f.Value)
 
-    return store.media.filter(item =>
-        filters.every(f => {
+  return store.media
+    .filter(item =>
+      filters.every(f => {
         const field = item[normalizeKey(f.Key)]
         return compare(field, f.ops, f.Value)
-        })
+      })
     )
+    .filter(item => {
+      if (!search.value.trim()) return true
+
+      return item.name
+        ?.toLowerCase()
+        .includes(search.value.toLowerCase())
+    })
 })
 
 /* ---------------- API ---------------- */
 
+const getAllMedia = async () => {
+    try {
+        store.setMedia(await getMedia());
+    } catch (e) {
+        console.log(e)
+    }
+}
+
 const getAllCollections = async () => {
     try {
         collections.value = await getCollections()
+    } catch (e) {
+        console.log(e)
+    }
+}
+
+const getMediaByTag = async (tagId: number) => {
+    try {
+        store.setMedia(await getMediaByTagId(tagId));
     } catch (e) {
         console.log(e)
     }
@@ -114,6 +141,16 @@ const getAllTags = async () => {
 
 /* ---------------- watchers ---------------- */
 
+watch(selectedTag, (tag) => {
+    if (tag) {
+        getMediaByTag(tag?.tag_id);
+        return
+    } else {
+        getAllMedia();
+        return
+    }
+});
+
 watch(selectedCollection, (col) => {
     if (!col) {
         editableFilters.value = [{ Key: '', ops: '', Value: '' }]
@@ -121,6 +158,8 @@ watch(selectedCollection, (col) => {
     }
 
     const raw = toRaw(col.filters)
+    console.log(raw)
+
     editableFilters.value = raw.map(f => ({ ...f }))
 })
 
@@ -140,10 +179,10 @@ onMounted(() => {
     <div class="top-row">
       <input v-model="search" placeholder="Rechercher..." />
 
-      <select v-model="selectedTag">
-        <option value="">Tags</option>
-        <option v-for="tag in tags" :key="tag" :value="tag">
-          {{ tag }}
+      <select v-model="selectedTagName">
+        <option value="">Auncun Tags</option>
+        <option v-for="tag in tags" :key="tag.id" :value="tag.name">
+          {{ tag.name }}
         </option>
       </select>
 
@@ -177,6 +216,9 @@ onMounted(() => {
 
         <input v-model="filter.Value" placeholder="value..." />
       </div>
+          <div class="tag" :style="{ backgroundColor: selectedTag?.color }">
+        {{ selectedTag?.name }}
+    </div>
     </div>
   </header>
 

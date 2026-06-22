@@ -1,3 +1,4 @@
+import type { Media } from '@/types/media'
 import {request} from './helper'
 import type { Tags } from '@/types/tags'
 
@@ -15,4 +16,10 @@ export async function getTagsById(
     tagsId: number
 ): Promise<Tags> {
     return request(`/tags/${tagsId}`)
+}
+
+export async function getMediaByTagId(
+    tagsId: number
+): Promise<Media[]> {
+    return request(`/tags/${tagsId}/media`)
 }

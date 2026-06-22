@@ -10,7 +10,7 @@ import type { Collection, CollectionApi } from '@/types/collection'
  */
 export async function getCollections(): Promise<Collection[]> {
     const data = await request<CollectionApi[]>('/collections')
-
+    console.log(data)
     return data.map(c => ({
         userId: c.user_id,
         name: c.name,

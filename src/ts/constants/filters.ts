@@ -10,8 +10,10 @@ export const FILTER_OPERATORS = [
 
 export const AVAILABLE_FILTERS = [
   'Status',
+  'Genre',
   'Rating',
   'Name',
+  'MediaType',
   'StartDate',
   'completionDate'
 ] as const
