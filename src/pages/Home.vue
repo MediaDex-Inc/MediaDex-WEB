@@ -4,6 +4,11 @@ import { getTags } from '@/ts/api/tags';
 import { ref, computed, onMounted } from 'vue';
 import type { Collection } from '@/types/collection';
 import type { Tag } from '@/types/tags';
+import { useSearchStore } from '@/stores/search';
+import { useRouter } from 'vue-router';
+
+const searchStore = useSearchStore()
+const router = useRouter()
 
 const apiErrorCollection = ref<string | null>(null)
 const loadingCollection = ref(false)
@@ -14,6 +19,14 @@ const loadingTags = ref(false)
 const collectionsData = ref<Collection[]>([])
 const tagsData = ref<Tag[]>([])
 
+const goToSearch = (collection: Collection) => {
+    searchStore.setPendingCollection(collection)
+    router.push('/search')
+}
+const goToSearchByTag = (tag: Tag) => {
+    searchStore.setPendingTag(tag)
+    router.push('/search')
+}
 const inputCollection = ref('')
 const filteredCollections = computed(() => {
     return collectionsData.value.filter(collection =>
@@ -27,6 +40,16 @@ const filteredTags = computed(() => {
         tag.name.toLowerCase().includes(inputTags.value.toLowerCase())
     )
 })
+const formatFilters = (filters: string | object[]): string => {
+  try {
+    const arr = typeof filters === 'string' ? JSON.parse(filters) : filters
+    return arr.map((f: { Key: string; ops: string; Value: string }) =>
+      `${f.Key}: ${f.Value}`
+    ).join(' · ')
+  } catch {
+    return ''
+  }
+}
 
 const collections = async () => {
     loadingCollection.value = true
@@ -81,14 +104,16 @@ onMounted(() => {
         placeholder="Search Collections..."
     />
 
-    <div class="collection-stack">
+    <div class="scroll-area">
         <div
-        class="collection-card"
-        v-for="collection in filteredCollections"
-        :key="collection.name"
+            class="collection-card"
+            v-for="collection in filteredCollections"
+            :key="collection.name"
+            @click="goToSearch(collection)"
+            style="cursor: pointer"
         >
-        <h3>{{ collection.name }}</h3>
-        <p>{{ collection.filters }}</p>
+            <h3>{{ collection.name }}</h3>
+            <p>{{ formatFilters(collection.filters) }}</p>
         </div>
     </div>
     </section>
@@ -106,151 +131,163 @@ onMounted(() => {
       <span v-if="loadingTags" class="spinner"></span>
       <p v-else-if="apiErrorTags">{{ apiErrorTags }}</p>
 
-      <div class="tags-container">
-        <span
-          class="tag"
-          v-for="tag in filteredTags"
-          :key="tag.name"
-          :style="{ backgroundColor: tag.color }"
-        >
-          {{ tag.name }}
-        </span>
-      </div>
+    <div class="tags-container">
+        <div class="tags-container">
+            <span
+                class="tag"
+                v-for="tag in filteredTags"
+                :key="tag.name"
+                :style="{ backgroundColor: tag.color }"
+                @click="goToSearchByTag(tag)"
+                style="cursor: pointer"
+            >
+                {{ tag.name }}
+            </span>
+        </div>
+    </div>
     </section>
 
   </div>
 </template>
-
-<style lang="css" scoped>
+<style scoped>
 .page {
+    --gold: #096c6c;
+    --gold-dim: rgba(216, 179, 74, .15);
+    --gold-glow: rgba(216, 179, 74, .2);
+
+    height: 100%;
     display: flex;
-    justify-content: center;
-    padding: 1.25rem;
-    gap: 15vw;
+    overflow: hidden;
 }
 
 .panel {
-    flex: 0 0 40%;
-    max-width: 30%;
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    padding: 1.25rem 1.5rem;
+    gap: .75rem;
+    overflow: hidden;
+}
+
+.panel:first-child {
+    border-right: .25rem solid var(--gold);
 }
 
 .panel h1 {
-    text-align: center;
-    font-size: 1.4rem;
-    margin-bottom: 0.625rem;
-    letter-spacing: 0.03em;
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: var(--gold);
+    padding-bottom: .6rem;
+    border-bottom: .1rem solid rgba(216, 179, 74, .25);
+    flex-shrink: 0;
 }
 
-.panel h1::after {
-    content: "";
-    display: block;
-    width: 2.5rem;
-    height: 0.125rem;
-    background: var(--color-primary);
-    margin: 0.5rem auto 0;
-    border-radius: 0.125rem;
-    opacity: 0.7;
-}
-
-/* INPUT */
-input {
-    padding: 0.625rem 0.75rem;
-    border-radius: 0.5rem;
-    border: 1px solid var(--color-border);
-    background: var(--bg-label);
-    color: var(--text);
+/* ── Inputs ── */
+.panel input[type="text"] {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    padding: .45rem 1rem;
+    border-radius: 999rem;
+    border: .15rem solid var(--gold);
+    background: transparent;
+    color: inherit;
+    font-size: .85rem;
     outline: none;
 }
 
-
-.collection-stack {
-    max-height: 70vh;
+/* ── Zone scrollable ── */
+.scroll-area {
+    flex: 1;
     overflow-y: auto;
-    overflow-x: hidden;
-
-    padding: 0.625rem 0.625rem 2.5rem;
-
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
     scrollbar-width: thin;
-    scrollbar-color: var(--color-primary) transparent;
+    scrollbar-color: var(--gold) transparent;
 }
 
-.collection-stack::after {
-    content: "";
-    display: block;
-    height: 7.5rem;
-}
-
-
+/* ── Cards collections ── */
 .collection-card {
-    height: 10rem;
-    background: var(--color-primary);
-    color: #ededed;
-    padding: 0.875rem;
-    border-radius: 0.875rem;
-
-    margin-bottom: 0.75rem;
-
-    position: relative;
-    z-index: 1;
-
-    box-shadow: 0 0.5rem 1.25rem var(--shadow);
-
-    transform-origin: top center;
-
-    transition: transform 0.25s ease, filter 0.25s ease, opacity 0.25s ease;
-
-    will-change: transform;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: .2rem;
+    padding: .75rem .9rem;
+    border-radius: .85rem;
+    border: .15rem solid var(--color-border);
+    background: rgba(255, 255, 255, .04);
+    cursor: pointer;
+    transition: border-color .2s, box-shadow .2s;
+    flex-shrink: 0;
 }
-
-.collection-card:not(:hover) {
-    filter: grayscale(0.4);
-}
-
-.collection-card:not(:first-child) {
-    margin-top: -8.125rem;
-}
-
-
-.collection-card p {
-    margin-top: 10%;
-}
-
 
 .collection-card:hover {
-    transform: scale(1.03);
-    z-index: 999;
-
-    filter: grayscale(0);
-    opacity: 1;
+    border-color: var(--gold);
+    box-shadow: 0 .2rem .8rem var(--gold-glow);
 }
 
+.collection-card h3 {
+    font-size: .9rem;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.collection-card p {
+    font-size: .75rem;
+    color: var(--color-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 2px;
+}
+
+/* ── Tags ── */
 .tags-container {
+    flex: 1;
+    overflow-y: auto;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    align-content: flex-start;
+    gap: .5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) transparent;
+    padding: 4px;
 }
 
 .tag {
-    padding: 0.375rem 0.625rem;
-    border-radius: 0.3125rem;
-    font-size: 0.85rem;
-    color: white;
-    box-shadow: 0 0.125rem 0.375rem var(--shadow);
-    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    padding: .25rem .75rem;
+    border-radius: 999rem;
+    font-size: .78rem;
+    font-weight: 500;
+    cursor: pointer;
+    border: .1rem solid;
+    transition: box-shadow .15s, transform .1s;
 }
 
-
-@media (max-width: 900px) {
-    .panel {
-        flex: 1;
-        max-width: 100%;
-    }
-
-    .page {
-        flex-direction: column;
-    }
+.tag:hover {
+    transform: scale(1.04);
+    box-shadow: 0 .15rem .5rem var(--gold-glow);
 }
+
+/* ── Spinner ── */
+.spinner {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(216, 179, 74, .3);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
 </style>

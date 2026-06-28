@@ -135,7 +135,7 @@ onMounted(async () => {
         rgba(255,255,255,.02)
     );
 
-    border: .25rem solid #d8b34a;
+    border: .25rem solid #096c6c;
 
     box-shadow:
         0 1.5rem 3rem var(--shadow),
@@ -195,7 +195,7 @@ onMounted(async () => {
     flex: 0 0 50%;
     object-fit: cover;
     border-radius: 1rem;
-    border: .2rem solid #d8b34a;
+    border: .2rem solid #096c6c;
     box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.25);
 }
 
@@ -232,7 +232,7 @@ onMounted(async () => {
 .footer-tags span {
     padding: .35rem .85rem;
     border-radius: 999rem;
-    border: .1rem solid #d8b34a;
+    border: .1rem solid #096c6c;
     color: black;
     font-size: clamp(.7rem, .8vw, .9rem);
     white-space: nowrap;

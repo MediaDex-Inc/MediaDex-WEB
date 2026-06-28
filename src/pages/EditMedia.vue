@@ -5,9 +5,10 @@ import { getMediaById, getMediaTags, getMediaCustomFields, createMediaTagLink, u
 import type { MediaRequest } from '@/types/media'
 import { createField, deleteField } from '@/ts/api/fields'
 import { createMediaField, deleteMediaField, getMediaFieldValue, updateMediaField } from '@/ts/api/MediaFields'
-import { createTag } from '@/ts/api/tags'
+import { createTag, getTags } from '@/ts/api/tags'
 import router from '@/ts/router'
 import { useRoute } from 'vue-router'
+import type { Tag } from '@/types/tags'
 
 const route = useRoute()
 const mediaId = Number(route.params.id)
@@ -26,9 +27,29 @@ const notes = ref('')
 
 /* ---------------- Tags -----------------------*/
 const newTag = ref('')
-const newTagColor = ref('#d8b34a')
+const newTagColor = ref('#096c6c')
 const tags = ref<{ name: string; color: string; tag_id?: number }[]>([])
 const deletedTagIds = ref<number[]>([])
+const selectedExistingTag = ref('')
+const allTags = ref<Tag[]>([]);
+
+const getAllTags = async () => {
+    try {
+        allTags.value = await getTags();
+    } catch (e: any) {
+        const msg = e?.response?.data?.message ?? e?.message ?? 'An error pop\'s out, that may be our bad.'
+        displayError(`Error : ${msg}`)
+    }
+}
+
+const linkExistingTag = () => {
+    const tag = allTags.value.find(t => t.tag_id === Number(selectedExistingTag.value))
+    if (!tag) return
+    if (!tags.value.find(t => t.name === tag.name)) {
+        tags.value.push({ name: tag.name, color: tag.color, tag_id: tag.tag_id })
+    }
+    selectedExistingTag.value = ''
+}
 
 const addTag = () => {
     const t = newTag.value.trim()
@@ -36,7 +57,7 @@ const addTag = () => {
         tags.value.push({ name: t, color: newTagColor.value })
     }
     newTag.value = ''
-    newTagColor.value = '#d8b34a'
+    newTagColor.value = '#096c6c'
 }
 
 const removeTag = (n: string) => {
@@ -113,7 +134,7 @@ onMounted(async () => {
             })
         )
         customFields.value = fieldValues
-
+        getAllTags();
     } catch (e: any) {
         const msg = e?.response?.data?.message ?? e?.message ?? 'Error loading media.'
         displayError(`Error : ${msg}`)
@@ -160,9 +181,12 @@ const handleSubmit = async () => {
         }
 
         for (const tag of tags.value) {
-            if (tag.tag_id) continue;
-            const newTag = await createTag({ name: tag.name, color: tag.color })
-            await createMediaTagLink(mediaId, newTag.tag_id)
+            if (tag.tag_id) {
+                await createMediaTagLink(mediaId, tag.tag_id)
+            } else {
+                const createdTag = await createTag({ name: tag.name, color: tag.color })
+                await createMediaTagLink(mediaId, createdTag.tag_id)
+            }
         }
 
         router.push(`/media/${mediaId}`)
@@ -213,10 +237,26 @@ const handleSubmit = async () => {
                             {{ tag.name }} ✕
                         </span>
                     </div>
+
                     <div class="tag-input-row">
-                        <input v-model="newTag" placeholder="Add a tag..." @keyup.enter="addTag" />
+                        <input v-model="newTag" placeholder="New tag..." @keyup.enter="addTag" />
                         <input type="color" v-model="newTagColor" class="color-picker" title="Tag color" />
                         <button @click="addTag">+</button>
+                    </div>
+
+                    <div class="tag-input-row">
+                        <select v-model="selectedExistingTag" class="tag-select">
+                            <option value="" disabled>Link existing tag...</option>
+                            <option
+                                v-for="t in allTags"
+                                :key="t.tag_id"
+                                :value="t.tag_id"
+                                :disabled="!!tags?.find(existing => existing.name === t.name)"
+                            >
+                                {{ t.name }}
+                            </option>
+                        </select>
+                        <button @click="linkExistingTag">+</button>
                     </div>
                 </div>
 
@@ -292,7 +332,7 @@ const handleSubmit = async () => {
     border-radius: 1.5rem;
     padding: 2rem;
     background: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
-    border: .25rem solid #d8b34a;
+    border: .25rem solid #096c6c;
     box-shadow: 0 1.5rem 3rem var(--shadow), inset 0 0 1rem rgba(255,255,255,.08);
 }
 
@@ -364,7 +404,7 @@ const handleSubmit = async () => {
     aspect-ratio: 3 / 2;
     object-fit: cover;
     border-radius: 1rem;
-    border: .2rem solid #d8b34a;
+    border: .2rem solid #096c6c;
     box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.25);
 }
 
@@ -372,7 +412,7 @@ const handleSubmit = async () => {
     width: 100%;
     aspect-ratio: 3 / 2;
     border-radius: 1rem;
-    border: .2rem dashed #d8b34a;
+    border: .2rem dashed #096c6c;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -436,7 +476,7 @@ const handleSubmit = async () => {
     height: 2rem;
     padding: .1rem;
     border-radius: 50%;
-    border: .1rem solid #d8b34a;
+    border: .1rem solid #096c6c;
     background: transparent;
     cursor: pointer;
     flex-shrink: 0;
@@ -462,7 +502,7 @@ const handleSubmit = async () => {
     flex: 1;
     padding: .3rem .6rem;
     border-radius: 999rem;
-    border: .1rem solid #d8b34a;
+    border: .1rem solid #096c6c;
     background: transparent;
     font-size: clamp(.7rem, .8vw, .9rem);
     color: var(--color-primary);
@@ -477,6 +517,19 @@ const handleSubmit = async () => {
     color: white;
     cursor: pointer;
     font-size: 1rem;
+}
+
+.tag-select {
+    flex: 1;
+    padding: .3rem .6rem;
+    border-radius: 999rem;
+    border: .1rem solid #096c6c;
+    background: transparent;
+    font-size: clamp(.7rem, .8vw, .9rem);
+    color: var(--text);
+    outline: none;
+    appearance: none;
+    cursor: pointer;
 }
 
 /********************************************/
@@ -648,7 +701,7 @@ select {
 .btn-remove {
     padding: .3rem .6rem;
     border-radius: 999rem;
-    border: .1rem solid #d8b34a;
+    border: .1rem solid #096c6c;
     background: transparent;
     color: var(--color-primary);
     cursor: pointer;
@@ -667,7 +720,7 @@ select {
     flex: 1;
     padding: .35rem .75rem;
     border-radius: .5rem;
-    border: .1rem solid #d8b34a;
+    border: .1rem solid #096c6c;
     background: transparent;
     color: inherit;
     outline: none;

@@ -26,40 +26,42 @@ const emit = defineEmits<{
 
     <button class="add-filter-btn" @click="emit('add')">+ Add filter</button>
 
-    <div class="tag" :style="{ backgroundColor: selectedTag?.color }">
-      {{ selectedTag?.name }}
+    <div class="tag" v-if="selectedTag" :style="{ backgroundColor: selectedTag?.color }">
+        {{ selectedTag?.name }}
     </div>
   </div>
 </template>
-<!-- <template>
-  <div class="filters">
-    <div
-      v-for="(filter, index) in filters"
-      :key="index"
-      class="filter-row"
-    >
-      <select v-model="filter.Key">
-        <option value="">Field</option>
-        <option v-for="k in AVAILABLE_FILTERS" :key="k" :value="k">{{ k }}</option>
-      </select>
 
-      <select v-model="filter.ops">
-        <option value="">Op</option>
-        <option v-for="op in FILTER_OPERATORS" :key="op" :value="op">{{ formatOp(op) }}</option>
-      </select>
-
-      <input v-model="filter.Value" placeholder="value..." />
-      <button class="remove-filter-btn" @click="emit('remove', index)">✕</button>
-    </div>
-
-    <button class="add-filter-btn" @click="emit('add')">+ Add filter</button>
-
-    <div class="tag" :style="{ backgroundColor: selectedTag?.color }">
-      {{ selectedTag?.name }}
-    </div>
-  </div>
-</template> -->
 
 <style scoped>
+.filters {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    flex-wrap: wrap;
+}
 
+.add-filter-btn {
+    padding: .35rem .9rem;
+    border-radius: 999rem;
+    border: .15rem dashed #096c6c;
+    background: transparent;
+    color: #096c6c;
+    font-size: .8rem;
+    cursor: pointer;
+    transition: background .2s;
+}
+
+.add-filter-btn:hover {
+    background: rgba(216,179,74,.1);
+}
+
+.tag {
+    padding: .2rem .75rem;
+    border-radius: 999rem;
+    font-size: .8rem;
+    font-weight: 500;
+    color: #000;
+    border: .1rem solid rgba(0,0,0,.1);
+}
 </style>

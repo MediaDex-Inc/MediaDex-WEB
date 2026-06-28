@@ -29,6 +29,8 @@ watch(
     <header>
         <Logo />
         <div class="header-mid">
+            <button class="btn-edit" @click="router.push(`/`)">Home</button>
+            <button class="btn-edit" @click="router.push(`/search`)">Search</button>
             <button class="btn-edit" @click="router.push(`/media/create`)">Create new media</button>
         </div>
         <div class="header-right">
@@ -55,10 +57,14 @@ header {
   align-items: center;
   gap: 0.5rem;
 }
+
 .header-mid {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: .75rem;
 }
 
 .btn-edit {
