@@ -4,3 +4,8 @@ export interface Tag {
     name: string
     color: string
 }
+
+export interface TagRequest{
+    name: string
+    color: string
+}

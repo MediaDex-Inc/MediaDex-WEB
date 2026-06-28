@@ -5,8 +5,18 @@ import Header from '@/components/header/Header.vue'
 
 <template>
     <Header />
-    <RouterView />
+    <main>
+        <RouterView />
+    </main>
 </template>
 
 <style scoped>
+main {
+    height: calc(100vh - 3.5rem);
+    padding: 1rem;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
 </style>

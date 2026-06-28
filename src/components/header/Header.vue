@@ -6,6 +6,7 @@ import { useTokenStore } from '@/stores/token'
 import Logo from '@/components/header/Logo.vue'
 import Logout from '@/components/header/Logout.vue'
 import LightDark from '@/components/header/LightDark.vue'
+import CreateMedia from '@/pages/CreateMedia.vue'
 
 const router = useRouter()
 const theme = useThemeStore()
@@ -27,6 +28,9 @@ watch(
 <template>
     <header>
         <Logo />
+        <div class="header-mid">
+            <button class="btn-edit" @click="router.push(`/media/create`)">Create new media</button>
+        </div>
         <div class="header-right">
             <LightDark />
             <Logout v-if="isLogin" />
@@ -50,5 +54,27 @@ header {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+.header-mid {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.btn-edit {
+    padding: .45rem 1.25rem;
+    border-radius: 999rem;
+    border: .15rem solid var(--color-primary);
+    background: transparent;
+    color: var(--color-primary);
+    font-size: clamp(.8rem, .9vw, 1rem);
+    cursor: pointer;
+    transition: all .2s;
+    font-weight: 500;
+}
+
+.btn-edit:hover {
+    background: var(--color-primary);
+    color: white;
 }
 </style>

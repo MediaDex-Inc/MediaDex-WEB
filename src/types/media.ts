@@ -12,3 +12,16 @@ export interface Media {
     status: string
     user_id: number
 }
+
+export interface MediaRequest {
+    completion_date: string | null
+    description: string | null
+    genre: string | null
+    img_url: string | null
+    media_type: string
+    name: string
+    notes: string | null
+    rating: number | null
+    start_date: string | null
+    status: string
+}

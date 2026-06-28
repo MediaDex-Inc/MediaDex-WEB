@@ -31,8 +31,8 @@ export async function getCollectionById(
 }
 
 export async function setCollection(
-    filters: String,
-    name: String
+    filters: string,
+    name: string
 ) : Promise<CollectionApi> {
     const data = await request<CollectionApi>('/collections', {
         method: "POST",

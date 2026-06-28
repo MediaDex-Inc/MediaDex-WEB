@@ -32,3 +32,20 @@ export const FILTER_KEY_MAP: Record<string, string> = {
 export const FILTER_KEY_MAP_REVERSE = Object.fromEntries(
   Object.entries(FILTER_KEY_MAP).map(([k, v]) => [v, k])
 );
+
+
+export const MEDIA_STATUS = [
+    "Planned",
+    "In Progress",
+    "Paused",
+    "Completed",
+    "Abandoned",
+    "For Later"
+]
+
+export const MEDIA_TYPE = [
+    "Film",
+    "Shows",
+    "Games",
+    "Books"
+]

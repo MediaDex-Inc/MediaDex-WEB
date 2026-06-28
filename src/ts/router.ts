@@ -4,6 +4,9 @@ import Home from '@/pages/Home.vue'
 import Search from '@/pages/Search.vue'
 import { loadRefreshToken, saveRefreshToken, saveToken } from '@/ts/saveload'
 import { BASE } from '@/ts/api/helper'
+import Media from '@/pages/Media.vue'
+import CreateMedia from '@/pages/CreateMedia.vue'
+import EditMedia from '@/pages/EditMedia.vue'
 
 const routes = [
     {
@@ -20,6 +23,21 @@ const routes = [
         path: '/search',
         name: "Search",
         component: Search
+    },
+    {
+        path: '/media/:id',
+        name: 'Media',
+        component: Media
+    },
+    {
+        path: '/media/create',
+        name: 'CreateMedia',
+        component: CreateMedia
+    },
+    {
+        path: '/media/:id/edit',
+        name: 'EditMedia',
+        component: EditMedia
     }
 ]
 

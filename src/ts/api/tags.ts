@@ -1,6 +1,6 @@
 import type { Media } from '@/types/media'
 import {request} from './helper'
-import type { Tag } from '@/types/tags'
+import type { Tag, TagRequest } from '@/types/tags'
 
 /**
  * Call tags api endpoint to get all tags of the user.
@@ -22,4 +22,25 @@ export async function getMediaByTagId(
     tagsId: number
 ): Promise<Media[]> {
     return request(`/tags/${tagsId}/media`)
+}
+
+export async function createTag(
+    payload: TagRequest
+) : Promise<Tag> {
+    const data = await request<Tag>('/tags', {
+        method: "POST",
+        body: JSON.stringify({
+            ...payload
+        })
+    });
+    return data
+}
+
+export async function deleteTag(
+    tagId: number
+) : Promise<Tag> {
+    const data = await request<Tag>(`/tags/${tagId}`, {
+        method: "DELETE"
+    });
+    return data
 }
