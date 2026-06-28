@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import LoginForm from '@/components/LoginForm.vue';
-import SignupForm from '@/components/SignupForm.vue';
+import LoginForm from '@/components/authentication/LoginForm.vue';
+import SignupForm from '@/components/authentication/SignupForm.vue';
 import { ref } from 'vue'
 
 

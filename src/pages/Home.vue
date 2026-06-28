@@ -3,7 +3,7 @@ import { getCollections } from '@/ts/api/collections';
 import { getTags } from '@/ts/api/tags';
 import { ref, computed, onMounted } from 'vue';
 import type { Collection } from '@/types/collection';
-import type { Tags } from '@/types/tags';
+import type { Tag } from '@/types/tags';
 
 const apiErrorCollection = ref<string | null>(null)
 const loadingCollection = ref(false)
@@ -12,7 +12,7 @@ const apiErrorTags = ref<string | null>(null)
 const loadingTags = ref(false)
 
 const collectionsData = ref<Collection[]>([])
-const tagsData = ref<Tags[]>([])
+const tagsData = ref<Tag[]>([])
 
 const inputCollection = ref('')
 const filteredCollections = computed(() => {

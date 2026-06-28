@@ -17,3 +17,18 @@ export const AVAILABLE_FILTERS = [
   'StartDate',
   'completionDate'
 ] as const
+
+export const FILTER_KEY_MAP: Record<string, string> = {
+  Status:         'status',
+  Genre:          'genre',
+  Rating:         'rating',
+  Name:           'name',
+  MediaType:      'media_type',
+  StartDate:      'start_date',
+  completionDate: 'completion_date',
+};
+
+// Invert the mapping
+export const FILTER_KEY_MAP_REVERSE = Object.fromEntries(
+  Object.entries(FILTER_KEY_MAP).map(([k, v]) => [v, k])
+);

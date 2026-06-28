@@ -1,6 +1,6 @@
-export interface Tags {
-    id: number
-    userId: number
+export interface Tag {
+    tag_id: number
+    user_id: number
     name: string
     color: string
 }

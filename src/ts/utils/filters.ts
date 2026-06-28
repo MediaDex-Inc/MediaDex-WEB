@@ -6,7 +6,8 @@ import type {
 
 import {
   FILTER_OPERATORS,
-  AVAILABLE_FILTERS
+  AVAILABLE_FILTERS,
+  FILTER_KEY_MAP_REVERSE
 } from '@/ts/constants/filters'
 
 export const isValidFilter = (f: any): f is CollectionFilter => {
@@ -24,10 +25,10 @@ export const normalizeFilters = (filters: string): CollectionFilter[] => {
     const parsed = JSON.parse(filters)
 
     const normalize = (f: any): CollectionFilter => ({
-      Key: f.Key ?? f.key,
-      ops: f.ops,
-      Value: f.Value ?? f.value
-    })
+    Key:   FILTER_KEY_MAP_REVERSE[f.Key ?? f.key] ?? f.Key ?? f.key, // 'media_type'into 'MediaType'
+    ops:   f.ops,
+    Value: f.Value ?? f.value
+    });
 
     if (Array.isArray(parsed)) {
       return parsed

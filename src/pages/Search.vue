@@ -2,32 +2,26 @@
 import { computed, ref, onMounted, watch } from 'vue'
 import { toRaw } from 'vue'
 
+import CollectionName from '@/components/modals/CollectionName.vue'
+import FilterBar from '@/components/filters/FilterBar.vue'
+
 import { getMediaByTagId, getTags } from '@/ts/api/tags'
-import { getCollections } from '@/ts/api/collections'
 import { getMedia } from '@/ts/api/media'
 
-import type { Collection } from '@/types/collection'
-import type { CollectionFilter } from '@/types/filters'
-import type { Tags } from '@/types/tags'
-
-import { formatOp } from '@/ts/utils/filters'
-import { AVAILABLE_FILTERS, FILTER_OPERATORS } from '@/ts/constants/filters'
 import { useMediaStore } from '@/stores/media'
+
+import { useFilters } from '@/composables/useFilter'
+import { useCollections } from '@/composables/useCollection'
+import type { Tag } from '@/types/tags'
 
 /* ---------------- state ---------------- */
 
 const store = useMediaStore()
-const search = ref('')
 const selectedTagName = ref('')
 const selectedCollectionName = ref('')
 
-const collections = ref<Collection[]>([])
-const tags = ref<Tags[]>([])
+const tags = ref<Tag[]>([])
 
-const editableFilters = ref<CollectionFilter[]>([])
-
-/* ---------------- derived ---------------- */
-const normalizeKey = (key: string) => key.charAt(0).toLowerCase() + key.slice(1)
 
 const selectedCollection = computed(() =>
     collections.value.find(c => c.name === selectedCollectionName.value) ?? null
@@ -38,86 +32,14 @@ const selectedTag = computed(() =>
 )
 
 /* ---------------- logic ---------------- */
-const toNumber = (v: any) => {
-    const n = Number(v)
-    return Number.isFinite(n) ? n : null
-}
-
-const compare = (field: any, op: string, value: string) => {
-
-    if (field == null || value == null) return false
-
-    switch (op) {
-        case 'eq':
-        return String(field) === value
-
-        case 'ne':
-        return String(field) !== value
-
-        case 'contains':
-        return String(field).includes(value)
-
-        case 'gt': {
-        const a = toNumber(field)
-        const b = toNumber(value)
-        return a !== null && b !== null && a > b
-        }
-
-        case 'lt': {
-        const a = toNumber(field)
-        const b = toNumber(value)
-        return a !== null && b !== null && a < b
-        }
-
-        case 'ge': {
-        const a = toNumber(field)
-        const b = toNumber(value)
-        return a !== null && b !== null && a >= b
-        }
-
-        case 'le': {
-        const a = toNumber(field)
-        const b = toNumber(value)
-        return a !== null && b !== null && a <= b
-        }
-
-        default:
-        return false
-    }
-}
-
-const filteredMedia = computed(() => {
-  const filters = editableFilters.value.filter(f => f.Key && f.ops && f.Value)
-
-  return store.media
-    .filter(item =>
-      filters.every(f => {
-        const field = item[normalizeKey(f.Key)]
-        return compare(field, f.ops, f.Value)
-      })
-    )
-    .filter(item => {
-      if (!search.value.trim()) return true
-
-      return item.name
-        ?.toLowerCase()
-        .includes(search.value.toLowerCase())
-    })
-})
+const { search, editableFilters, filteredMedia } = useFilters();
+const { collections, showNameModal, getAllCollections, saveFilters, confirmSave } = useCollections(editableFilters);
 
 /* ---------------- API ---------------- */
 
 const getAllMedia = async () => {
     try {
         store.setMedia(await getMedia());
-    } catch (e) {
-        console.log(e)
-    }
-}
-
-const getAllCollections = async () => {
-    try {
-        collections.value = await getCollections()
     } catch (e) {
         console.log(e)
     }
@@ -158,7 +80,6 @@ watch(selectedCollection, (col) => {
     }
 
     const raw = toRaw(col.filters)
-    console.log(raw)
 
     editableFilters.value = raw.map(f => ({ ...f }))
 })
@@ -180,8 +101,8 @@ onMounted(() => {
       <input v-model="search" placeholder="Rechercher..." />
 
       <select v-model="selectedTagName">
-        <option value="">Auncun Tags</option>
-        <option v-for="tag in tags" :key="tag.id" :value="tag.name">
+        <option value="">Auncun Tag</option>
+        <option v-for="tag in tags" :key="tag.tag_id" :value="tag.name">
           {{ tag.name }}
         </option>
       </select>
@@ -193,34 +114,15 @@ onMounted(() => {
         </option>
       </select>
     </div>
-
-    <div class="filters">
-      <div
-        v-for="(filter, index) in editableFilters"
-        :key="index"
-        class="filter-row"
-      >
-        <select v-model="filter.Key">
-          <option value="">Field</option>
-          <option v-for="k in AVAILABLE_FILTERS" :key="k" :value="k">
-            {{ k }}
-          </option>
-        </select>
-
-        <select v-model="filter.ops">
-          <option value="">Op</option>
-          <option v-for="op in FILTER_OPERATORS" :key="op" :value="op">
-            {{ formatOp(op) }}
-          </option>
-        </select>
-
-        <input v-model="filter.Value" placeholder="value..." />
-      </div>
-          <div class="tag" :style="{ backgroundColor: selectedTag?.color }">
-        {{ selectedTag?.name }}
-    </div>
-    </div>
+    <FilterBar
+        :filters="editableFilters"
+        :selected-tag="selectedTag"
+        @add="editableFilters.push({ Key: '', ops: '', Value: '' })"
+        @remove="(i) => editableFilters.splice(i, 1)"
+    />
+    <button class="save-btn" @click="saveFilters">Sauvegarder</button>
   </header>
+    <CollectionName v-model:show="showNameModal" @confirm-save="confirmSave" />
 
   <main>
     <div v-for="m in filteredMedia" :key="m.media_id">
