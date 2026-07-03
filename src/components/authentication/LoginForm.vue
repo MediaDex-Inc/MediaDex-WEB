@@ -28,8 +28,8 @@ function validate(): boolean {
     : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
     ? 'Email invalide'
     : undefined
-  formErrors.username = !form.username ? "Nom d'utilisateur requis" : undefined
-  formErrors.password = !form.password ? 'Mot de passe requis' : undefined
+  formErrors.username = !form.username ? "Username required" : undefined
+  formErrors.password = !form.password ? 'Password required' : undefined
   return !Object.values(formErrors).some(Boolean)
 }
 
@@ -44,7 +44,7 @@ const connection = async () => {
         tokenStore.setRefreshToken(data.refresh_token)
         router.push({ path: '/' })
     } catch (e: unknown) {
-        apiError.value = e instanceof Error ? e.message : 'Une erreur est survenue lors de la connexion'
+        apiError.value = e instanceof Error ? e.message : 'An error occurred while connecting.'
     } finally {
         loading.value = false
     }
@@ -55,18 +55,18 @@ const connection = async () => {
   <form class="form" @submit.prevent="connection" novalidate>
     <div class="field">
       <label for="email">Email</label>
-      <input id="email" v-model="form.email" type="email" placeholder="vous@exemple.com" />
+      <input id="email" v-model="form.email" type="email" placeholder="you@example.com" />
       <span v-if="formErrors.email" class="error">{{ formErrors.email }}</span>
     </div>
 
     <div class="field">
-      <label for="username">Nom d'utilisateur</label>
-      <input id="username" v-model="form.username" type="text" placeholder="votre_pseudo" />
+      <label for="username">Username</label>
+      <input id="username" v-model="form.username" type="text" placeholder="your_pseudo" />
       <span v-if="formErrors.username" class="error">{{ formErrors.username }}</span>
     </div>
 
     <div class="field">
-      <label for="password">Mot de passe</label>
+      <label for="password">Password</label>
       <input id="password" v-model="form.password" type="password" placeholder="••••••••" autocomplete="current-password" />
       <span v-if="formErrors.password" class="error">{{ formErrors.password }}</span>
     </div>
@@ -75,7 +75,7 @@ const connection = async () => {
 
     <button type="submit" class="btn" :disabled="loading">
       <span v-if="loading" class="spinner"></span>
-      {{ loading ? 'Connection…' : 'Se connecter' }}
+      {{ loading ? 'Connection…' : 'Log in' }}
     </button>
   </form>
 </template>

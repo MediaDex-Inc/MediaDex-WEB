@@ -238,7 +238,7 @@ onMounted(() => {
             <textarea class="description" v-model="description" placeholder="Description..." />
 
             <span>Notes</span>
-            <textarea class="notes" v-model="notes" placeholder="Notes personnelles..." />
+            <textarea class="notes" v-model="notes" placeholder="Personal notes..." />
 
             <div class="custom-fields-section">
                 <strong>Personalized fields</strong>

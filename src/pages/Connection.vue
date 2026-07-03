@@ -10,8 +10,8 @@ const isSignup = ref(false)
 <template>
   <section id="connection">
     <div class="toggle">
-      <button :class="{ active: !isSignup }" @click="isSignup = false">Connexion</button>
-      <button :class="{ active: isSignup }" @click="isSignup = true">Inscription</button>
+      <button :class="{ active: !isSignup }" @click="isSignup = false">Connection</button>
+      <button :class="{ active: isSignup }" @click="isSignup = true">Register</button>
     </div>
 
     <LoginForm v-if="!isSignup" />

@@ -120,17 +120,17 @@ onMounted(() => {
 <div class="search-page">
   <header class="header">
     <div class="top-row">
-      <input v-model="search" placeholder="Rechercher..." />
+      <input v-model="search" placeholder="Search..." />
 
       <select v-model="selectedTagName">
-        <option value="">Auncun Tag</option>
+        <option value="">No tag selected</option>
         <option v-for="tag in tags" :key="tag.tag_id" :value="tag.name">
           {{ tag.name }}
         </option>
       </select>
 
       <select v-model="selectedCollectionName">
-        <option value="">Aucune collection</option>
+        <option value="">No collection selected</option>
         <option v-for="c in collections" :key="c.name" :value="c.name">
           {{ c.name }}
         </option>
@@ -142,7 +142,7 @@ onMounted(() => {
         @add="editableFilters.push({ Key: '', ops: '', Value: '' })"
         @remove="(i) => editableFilters.splice(i, 1)"
     />
-    <button class="save-btn" @click="saveFilters">Sauvegarder</button>
+    <button class="save-btn" @click="saveFilters">Save</button>
   </header>
     <CollectionName v-model:show="showNameModal" @confirm-save="confirmSave" />
 
