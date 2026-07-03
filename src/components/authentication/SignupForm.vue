@@ -68,7 +68,7 @@ const register = async () => {
 
     <div class="field">
       <label for="username">Username</label>
-      <input id="username" v-model="form.username" type="text" placeholder="votre_pseudo" />
+      <input id="username" v-model="form.username" type="text" placeholder="your_username" />
       <span v-if="formErrors.username" class="error">{{ formErrors.username }}</span>
     </div>
 
