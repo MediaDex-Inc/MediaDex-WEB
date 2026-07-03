@@ -74,22 +74,21 @@ onMounted(async () => {
                 <span>{{ media?.media_type }}</span>
             </div>
 
-            <img
-                class="media-image"
-                :src="media?.img_url"
-                :alt="media?.name"
-            />
+            <div class="image-wrapper">
+                <img class="media-image" :src="media?.img_url" :alt="media?.name" />
+            </div>
             <div class="recto-footer">
                 <div class="footer-tags-wrapper">
                     <strong>Tags</strong>
                     <div class="footer-tags">
-                        <span v-for="tag in tags" :key="tag.tag_id" :style="{backgroundColor: tag.color}">{{ tag.name }}</span>
+                        <span v-for="tag in tags" :key="tag.tag_id" :style="{ backgroundColor: tag.color }">{{ tag.name
+                            }}</span>
                     </div>
                 </div>
                 <div class="footer-infos">
-                    <span>Rating : {{ media?.rating ?? '-'}} ⭐</span>
-                    <span>Status : {{ media?.status ?? '-'}}</span>
-                    <span>Genre : {{ media?.genre ?? '-'}}</span>
+                    <span>Rating : {{ media?.rating ?? '-' }} ⭐</span>
+                    <span>Status : {{ media?.status ?? '-' }}</span>
+                    <span>Genre : {{ media?.genre ?? '-' }}</span>
                 </div>
             </div>
         </div>
@@ -129,17 +128,15 @@ onMounted(async () => {
     border-radius: 1.5rem;
     padding: 2rem;
 
-    background: linear-gradient(
-        145deg,
-        rgba(255,255,255,.08),
-        rgba(255,255,255,.02)
-    );
+    background: linear-gradient(145deg,
+            rgba(255, 255, 255, .08),
+            rgba(255, 255, 255, .02));
 
     border: .25rem solid #096c6c;
 
     box-shadow:
         0 1.5rem 3rem var(--shadow),
-        inset 0 0 1rem rgba(255,255,255,.08);
+        inset 0 0 1rem rgba(255, 255, 255, .08);
 }
 
 /********************************************/
@@ -150,7 +147,8 @@ onMounted(async () => {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: .75rem;
 
     padding: 1.5rem;
 
@@ -165,7 +163,6 @@ onMounted(async () => {
 
 .recto-header {
     text-align: center;
-    margin-bottom: 1.5rem;
 }
 
 .recto-header h2 {
@@ -190,13 +187,23 @@ onMounted(async () => {
 
 /********************************************/
 
+.image-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+}
+
 .media-image {
-    width: 100%;
-    flex: 0 0 50%;
-    object-fit: cover;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
     border-radius: 1rem;
     border: .2rem solid #096c6c;
-    box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.25);
+    box-shadow: 0 .75rem 1.5rem rgba(0, 0, 0, .25);
 }
 
 /*********************************/
@@ -204,7 +211,7 @@ onMounted(async () => {
     display: flex;
     flex-direction: row;
     gap: 1rem;
-    margin-top: .75rem;
+    flex-shrink: 0;
 }
 
 .recto-footer span {
@@ -265,6 +272,7 @@ onMounted(async () => {
 .card-verso {
     flex: 1;
     min-height: 0;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
@@ -298,7 +306,7 @@ onMounted(async () => {
 
     border-radius: 1rem;
 
-    background: rgba(0,0,0,.05);
+    background: rgba(0, 0, 0, .05);
 
     line-height: 1.8;
     font-size: clamp(.95rem, 1vw, 1.15rem);
@@ -307,8 +315,8 @@ onMounted(async () => {
 /********************************************/
 
 .notes {
-    flex-shrink: 0;
-    min-height: 4rem;  
+    flex-shrink: 1;
+    min-height: 2rem;
 
     padding: 1.5rem;
 
@@ -316,7 +324,7 @@ onMounted(async () => {
 
     border-left: .35rem solid var(--color-primary);
 
-    background: rgba(0,0,0,.05);
+    background: rgba(0, 0, 0, .05);
 
     font-style: italic;
 
@@ -340,23 +348,46 @@ onMounted(async () => {
     background: var(--color-primary);
     color: white;
 }
+
 /********************************************/
+
+@media (max-width: 80rem) {
+    .media-card {
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .card-recto {
+        flex: 0 0 36%;
+        padding: 1rem;
+    }
+
+    .card-verso {
+        padding: 1rem;
+        gap: 1rem;
+    }
+}
 
 @media (max-width: 62rem) {
 
     .media-card {
         flex-direction: column;
-        min-height: auto;
+        height: auto;
+        min-height: 90%;
+        overflow-y: auto;
     }
 
     .card-recto,
     .card-verso {
         flex: none;
         width: 100%;
+        overflow: visible;
+        box-sizing: border-box;
     }
 
     .media-image {
         max-height: 32rem;
+        aspect-ratio: unset;
         object-fit: cover;
     }
 

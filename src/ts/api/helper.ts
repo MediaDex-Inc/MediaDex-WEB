@@ -1,7 +1,7 @@
 import { useTokenStore } from '@/stores/token'
 
 // TODO change URL base on the external API
-export const BASE = 'http://localhost:8632/api/v1'
+export const BASE = 'http://mediadex-api.ddns.net:38080/api/v1'
 
 // ── Private helpers ──────────────────────────────────────────────────────────
 
@@ -12,10 +12,7 @@ function getToken(): string {
   return token
 }
 
-export async function request<T>(
-  path: string,
-  options: RequestInit = {}
-): Promise<T> {
+export async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken()
   const response = await fetch(`${BASE}${path}`, {
     ...options,
@@ -31,7 +28,9 @@ export async function request<T>(
     try {
       const data = await response.json()
       message = data.message || message
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     throw new Error(message)
   }
 

@@ -32,6 +32,13 @@ html, body {
     padding: 0;
 }
 
+@media (max-width: 62rem) {
+    html, body {
+        overflow-y: auto;
+        height: auto;
+    }
+}
+
 .spinner {
     display: inline-block;
     width: 13px;

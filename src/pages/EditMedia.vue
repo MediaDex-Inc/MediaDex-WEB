@@ -115,16 +115,16 @@ onMounted(async () => {
         ])
         tags.value = fetchedTags.map(t => ({ name: t.name, color: t.color, tag_id: t.tag_id }))
 
-        name.value         = media.name ?? ''
-        media_type.value   = media.media_type ?? ''
-        img_url.value      = media.img_url ?? ''
-        rating.value       = media.rating ?? null
-        status.value       = media.status ?? ''
-        genre.value        = media.genre ?? ''
-        description.value  = media.description ?? ''
-        notes.value        = media.notes ?? ''
+        name.value = media.name ?? ''
+        media_type.value = media.media_type ?? ''
+        img_url.value = media.img_url ?? ''
+        rating.value = media.rating ?? null
+        status.value = media.status ?? ''
+        genre.value = media.genre ?? ''
+        description.value = media.description ?? ''
+        notes.value = media.notes ?? ''
 
-        start_date.value      = media.start_date ? media.start_date.substring(0, 10) : ''
+        start_date.value = media.start_date ? media.start_date.substring(0, 10) : ''
         completion_date.value = media.completion_date ? media.completion_date.substring(0, 10) : ''
 
         const fieldValues = await Promise.all(
@@ -169,7 +169,7 @@ const handleSubmit = async () => {
 
         for (const field of customFields.value) {
             if (field.field_id) {
-                await updateMediaField(field.field_id,mediaId,field.value);
+                await updateMediaField(field.field_id, mediaId, field.value);
             } else {
                 const createdField = await createField({ name: field.name });
                 await createMediaField({
@@ -218,21 +218,16 @@ const handleSubmit = async () => {
             <div class="image-wrapper">
                 <img v-if="img_url" class="media-image" :src="img_url" :alt="name" />
                 <div v-else class="image-placeholder">🖼️ Image preview</div>
-                <input class="input-url" v-model="img_url" placeholder="Image URL" />
             </div>
+            <input class="input-url" v-model="img_url" placeholder="Image URL" />
 
             <div class="recto-footer">
                 <div class="footer-tags-wrapper">
                     <strong>Tags</strong>
                     <div class="footer-tags">
-                        <span
-                            v-for="tag in tags"
-                            :key="tag.name"
-                            class="tag-removable"
-                            :style="{ backgroundColor: tag.color + '33' }"
-                            @click="removeTag(tag.name)"
-                            title="Click to delete"
-                        >
+                        <span v-for="tag in tags" :key="tag.name" class="tag-removable"
+                            :style="{ backgroundColor: tag.color + '33' }" @click="removeTag(tag.name)"
+                            title="Click to delete">
                             <span class="tag-dot" :style="{ backgroundColor: tag.color }"></span>
                             {{ tag.name }} ✕
                         </span>
@@ -247,12 +242,8 @@ const handleSubmit = async () => {
                     <div class="tag-input-row">
                         <select v-model="selectedExistingTag" class="tag-select">
                             <option value="" disabled>Link existing tag...</option>
-                            <option
-                                v-for="t in allTags"
-                                :key="t.tag_id"
-                                :value="t.tag_id"
-                                :disabled="!!tags?.find(existing => existing.name === t.name)"
-                            >
+                            <option v-for="t in allTags" :key="t.tag_id" :value="t.tag_id"
+                                :disabled="!!tags?.find(existing => existing.name === t.name)">
                                 {{ t.name }}
                             </option>
                         </select>
@@ -331,9 +322,9 @@ const handleSubmit = async () => {
     overflow: hidden;
     border-radius: 1.5rem;
     padding: 2rem;
-    background: linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+    background: linear-gradient(145deg, rgba(255, 255, 255, .08), rgba(255, 255, 255, .02));
     border: .25rem solid #096c6c;
-    box-shadow: 0 1.5rem 3rem var(--shadow), inset 0 0 1rem rgba(255,255,255,.08);
+    box-shadow: 0 1.5rem 3rem var(--shadow), inset 0 0 1rem rgba(255, 255, 255, .08);
 }
 
 /********************************************/
@@ -344,7 +335,8 @@ const handleSubmit = async () => {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: .75rem;
     padding: 1.5rem;
     border-radius: 1.25rem;
     background: var(--bg-label);
@@ -355,11 +347,11 @@ const handleSubmit = async () => {
 
 .recto-header {
     text-align: center;
-    margin-bottom: 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: .5rem;
+    flex-shrink: 0;
 }
 
 .input-title {
@@ -388,29 +380,36 @@ const handleSubmit = async () => {
     width: auto;
 }
 
-.input-badge::placeholder { color: rgba(255,255,255,.7); }
+.input-badge::placeholder {
+    color: rgba(255, 255, 255, .7);
+}
 
 /********************************************/
 
 .image-wrapper {
     display: flex;
-    flex-direction: column;
-    gap: .5rem;
-    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .media-image {
-    width: 100%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
     border-radius: 1rem;
     border: .2rem solid #096c6c;
-    box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.25);
+    box-shadow: 0 .75rem 1.5rem rgba(0, 0, 0, .25);
 }
 
 .image-placeholder {
     width: 100%;
     aspect-ratio: 3 / 2;
+    max-height: 100%;
+    box-sizing: border-box;
     border-radius: 1rem;
     border: .2rem dashed #096c6c;
     display: flex;
@@ -424,6 +423,7 @@ const handleSubmit = async () => {
 .input-url {
     width: 100%;
     box-sizing: border-box;
+    flex-shrink: 0;
     padding: .35rem .75rem;
     border-radius: .5rem;
     border: .1rem solid var(--color-border);
@@ -439,7 +439,7 @@ const handleSubmit = async () => {
     display: flex;
     flex-direction: row;
     gap: 1rem;
-    margin-top: .75rem;
+    flex-shrink: 0;
 }
 
 .footer-tags-wrapper {
@@ -482,8 +482,14 @@ const handleSubmit = async () => {
     flex-shrink: 0;
 }
 
-.color-picker::-webkit-color-swatch-wrapper { padding: 0; }
-.color-picker::-webkit-color-swatch { border-radius: 50%; border: none; }
+.color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-picker::-webkit-color-swatch {
+    border-radius: 50%;
+    border: none;
+}
 
 .tag-removable {
     cursor: pointer;
@@ -491,7 +497,9 @@ const handleSubmit = async () => {
     border-radius: 20px;
 }
 
-.tag-removable:hover { opacity: .6; }
+.tag-removable:hover {
+    opacity: .6;
+}
 
 .tag-input-row {
     display: flex;
@@ -593,12 +601,13 @@ select {
     box-sizing: border-box;
     cursor: pointer;
 }
+
 /********************************************/
 
 .card-verso {
     flex: 1;
     min-height: 0;
-    overflow-y: auto;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     gap: 1rem;
@@ -641,7 +650,7 @@ select {
     resize: none;
     padding: 1.5rem;
     border-radius: 1rem;
-    background: rgba(0,0,0,.05);
+    background: rgba(0, 0, 0, .05);
     border: none;
     line-height: 1.8;
     font-size: clamp(.95rem, 1vw, 1.15rem);
@@ -653,14 +662,14 @@ select {
 /********************************************/
 
 .notes {
-    flex-shrink: 0;
-    min-height: 4rem;
+    flex-shrink: 1;
+    min-height: 2rem;
     resize: none;
     padding: 1.5rem;
     border-radius: 1rem;
     border: none;
     border-left: .35rem solid var(--color-primary);
-    background: rgba(0,0,0,.05);
+    background: rgba(0, 0, 0, .05);
     font-style: italic;
     font-size: clamp(.9rem, .95vw, 1.05rem);
     color: inherit;
@@ -708,7 +717,10 @@ select {
     font-size: .85rem;
     transition: opacity .2s;
 }
-.btn-remove:hover { opacity: .6; }
+
+.btn-remove:hover {
+    opacity: .6;
+}
 
 .custom-field-add {
     display: flex;
@@ -737,7 +749,10 @@ select {
     font-size: 1rem;
     transition: opacity .2s;
 }
-.custom-field-add button:hover { opacity: .8; }
+
+.custom-field-add button:hover {
+    opacity: .8;
+}
 
 /********************************************/
 
@@ -754,7 +769,9 @@ select {
     transition: opacity .2s;
 }
 
-.btn-submit:hover { opacity: .8; }
+.btn-submit:hover {
+    opacity: .8;
+}
 
 /* Popup */
 .error-popup {
@@ -773,7 +790,7 @@ select {
     font-size: clamp(.85rem, 1vw, 1rem);
     font-weight: 500;
 
-    box-shadow: 0 .5rem 2rem rgba(0,0,0,.3);
+    box-shadow: 0 .5rem 2rem rgba(0, 0, 0, .3);
     white-space: nowrap;
 }
 
@@ -781,6 +798,7 @@ select {
 .popup-leave-active {
     transition: opacity .3s, transform .3s;
 }
+
 .popup-enter-from,
 .popup-leave-to {
     opacity: 0;
@@ -798,16 +816,39 @@ select {
 
 /********************************************/
 
+@media (max-width: 80rem) {
+    .media-card {
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .card-recto {
+        flex: 0 0 38%;
+        padding: 1rem;
+    }
+
+    .card-verso {
+        padding: 1rem;
+        gap: .75rem;
+    }
+}
+
 @media (max-width: 62rem) {
     .media-card {
         flex-direction: column;
-        min-height: auto;
+        height: auto;
+        min-height: 90%;
+        overflow-y: auto;
     }
+
     .card-recto,
     .card-verso {
         flex: none;
         width: 100%;
+        overflow: visible;
+        box-sizing: border-box;
     }
+
     .media-image,
     .image-placeholder {
         aspect-ratio: unset;

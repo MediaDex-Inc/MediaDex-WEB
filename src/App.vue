@@ -19,4 +19,13 @@ main {
     align-items: center;
     justify-content: center;
 }
+
+@media (max-width: 62rem) {
+    main {
+        height: auto;
+        min-height: calc(100vh - 3.5rem);
+        align-items: flex-start;
+        overflow-y: auto;
+    }
+}
 </style>
