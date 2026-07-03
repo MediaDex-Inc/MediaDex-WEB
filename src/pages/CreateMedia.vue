@@ -108,7 +108,7 @@ const handleSubmit = async () => {
             media_type: media_type.value,
             name: name.value,
             notes: notes.value,
-            rating: rating.value,
+            rating: rating.value ?? null,
             start_date: start_date.value ? `${start_date.value}T00:00:00Z` : null,
             status: status.value,
         }
